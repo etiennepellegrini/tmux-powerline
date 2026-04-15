@@ -9,10 +9,10 @@ run_segment() {
 		cpu_system=$(echo "$cpu_line" | grep -o "[0-9]\+\(.[0-9]\+\)\? *sys\?" | awk '{ print $1 }')
 		cpu_idle=$(echo "$cpu_line" | grep -o "[0-9]\+\(.[0-9]\+\)\? *id\(le\)\?" | awk '{ print $1 }')
 	elif tp_shell_is_macos; then
-		cpus_line=$(top -e -l 1 | grep "CPU usage:" | sed 's/CPU usage: //')
-		cpu_user=$(echo "$cpus_line" | awk '{print $1}' | sed 's/%//')
-		cpu_system=$(echo "$cpus_line" | awk '{print $3}' | sed 's/%//')
-		cpu_idle=$(echo "$cpus_line" | awk '{print $5}' | sed 's/%//')
+		cpus_line=$(iostat -dC | tail -1 | cut -d ' ' -f 9,11,12)
+		cpu_user=$(echo "$cpus_line" | awk '{print $1}')
+		cpu_system=$(echo "$cpus_line" | awk '{print $2}' | sed 's/%//')
+		cpu_idle=$(echo "$cpus_line" | awk '{print $3}' | sed 's/%//')
 	fi
 
 	if [ -n "$cpu_user" ] && [ -n "$cpu_system" ] && [ -n "$cpu_idle" ]; then
